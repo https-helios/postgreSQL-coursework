@@ -1,37 +1,41 @@
-
 <?php
-$host = "localhost";
-$port = "5432";
-$username = "postgres";
-$password = "nn24"; 
-$dbname = "WaterBottle Coursework"; 
+$allow_output = true; 
+include_once('connection.php');
+
 try{
-    //connecting to default 'postgres' database
-    $dsn = "pgsql:host=$host;port=$port;dbname=postgres";
-    $conn = new PDO($dsn, $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    //checking if target database exists
-    $stmt = $conn->prepare("SELECT 1 FROM pg_database WHERE datname = :dbname");
-    $stmt->execute([':dbname'=> $dbname]);
-    if($stmt->fetch()){
-        if(!empty($allow_output)){
-            echo "Database '$dbname' already exists.\n";
-        }
-    } else {
-        //creating target database
-        $conn->exec('CREATE DATABASE \"$dbname\"');
-        if(!empty($allow_output)){
-            echo "Database '$dbname' created successfully.\n";
-        }
-    }
+    //creating schemas
+    $db->exec('CREATE SCHEME IF NOT EXISTS "WB";'); //whereby WB stands for water bottles 
+    echo"<br><br>Schema 'WB' created successfully.";
+
+    //creating UUID extensions for random numbers
+    $db->exec('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
+    echo"<br><br> Extension 'uuid-ossp' created successfully.";
+    
+    //dropping the Users Table
+    $db->exec('DROP TABLE IF EXISTS "WB"."tblUsers";');
+    echo"<br><br> Table 'tblUsers' dropped successfully.";
+
+    //dropping the Products table
+    $db->exec('DROP TABLE IF EXISTS ""WB"."tblProducts";');
+    echo"<br><br> Table 'tblProducts' dropped successfully.";
+
+    //dropping the Basket table
+    $db->exec('DROP TABLE IF EXISTS "WB"."tblBasket";');
+    echo"<br><br> Table 'tblBasket' dropped successfully.";
+
+    //dropping the Order table
+    $db->exec('DROP TABLE IF EXISTS "WB"."tblOrder";');
+    echo"<br><br> Table 'tblOrder' dropped successfully.";
+
+    //dropping Reviews Table
+    $db->exec('DROP TABLE IF EXISTS "WB"."tblReviews";');
+    echo"<br><br> Table 'tblReviews' dropped successfully.";
+
+    //dropping type table
+    $db->exec('DROP TABLE IF EXISTS "WB"."tblType";');
+    echo "<br><br> Table 'tblType' dropped successfully.";
+
+
 }
-//connecting to target database
-$dsnTarget = "pgsql:host=$host;port=$port;dbname=$dbname";
-$db = new PDO($dsnTarget, $username, $password);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-if(!empty($allow_output)){
-    echo "Connected to database '$dbname' successfully.\n";
-} catch(PDOException $e){
-    die("Database connection failed: " . $e->getMessage());
-}
+
 ?>
